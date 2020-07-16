@@ -20,10 +20,10 @@ And then execute:
     require 'capistrano/sidekiq'
     install_plugin Capistrano::Sidekiq  # Default sidekiq tasks
     # Then select your service manager
-    install_plugin Capistrano::Sidekiq::Systemd 
-    # or  
+    install_plugin Capistrano::Sidekiq::Systemd
+    # or
     install_plugin Capistrano::Sidekiq::Upstart  # tests needed
-    # or  
+    # or
     install_plugin Capistrano::Sidekiq::Monit  # tests needed
 ```
 
@@ -50,7 +50,7 @@ Configurable options, shown here with defaults:
 :monit_bin => '/usr/bin/monit'
 :sidekiq_monit_default_hooks => true
 :sidekiq_monit_group => nil
-:sidekiq_service_name => "sidekiq_#{fetch(:application)}" 
+:sidekiq_service_name => "sidekiq_#{fetch(:application)}"
 
 :sidekiq_user => nil #user to run sidekiq as
 ```
@@ -84,6 +84,17 @@ If your deploy user has no need in `sudo` for using monit, you can disable it as
 
 ```ruby
 set :sidekiq_monit_use_sudo, false
+```
+
+## Multiple processes
+
+You can configure sidekiq to start with multiple processes. If you want to do that, just set
+`sidekiq_options_per_process` with an array of the configuration options that you want in string format.
+This example should boot the first process with the queue `high` and the second one with the queues `default`
+and `low`:
+
+```ruby
+set :sidekiq_options_per_process, ["--queue high", "--queue default --queue low"]
 ```
 
 ## Contributing
