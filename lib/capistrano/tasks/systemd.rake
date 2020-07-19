@@ -51,7 +51,7 @@ namespace :sidekiq do
     on roles fetch(:sidekiq_roles) do |role|
       git_plugin.switch_user(role) do
         git_plugin.each_process_with_index do |process_name, options, index|
-          git_plugin.create_systemd_template(index)
+          git_plugin.create_systemd_template(process_name, index)
 
           if fetch(:sidekiq_service_unit_user) == :system
             execute :sudo, :systemctl, "enable", process_name
@@ -114,10 +114,9 @@ namespace :sidekiq do
     end
   end
 
-  def create_systemd_template(index)
+  def create_systemd_template(process_name, index)
     ctemplate = compiled_template(index)
     systemd_path = fetch(:service_unit_path, fetch_systemd_unit_path)
-    process_name = "#{fetch(:sidekiq_service_unit_name)}-#{index}"
 
     if fetch(:sidekiq_service_unit_user) == :user
       backend.execute :mkdir, "-p", systemd_path
